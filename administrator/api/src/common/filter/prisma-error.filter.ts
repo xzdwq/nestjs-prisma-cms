@@ -10,7 +10,10 @@ const config: IConfiguration = configuration();
 
 @Catch(Prisma.PrismaClientKnownRequestError)
 export class PrismaExceptionFilter extends BaseExceptionFilter {
-  public catch(exception: Prisma.PrismaClientKnownRequestError | Prisma.NotFoundError, host: ArgumentsHost): Response<any, Record<string, any>> {
+  public catch(
+    exception: Prisma.PrismaClientKnownRequestError | Prisma.NotFoundError,
+    host: ArgumentsHost,
+  ): Response<any, Record<string, any>> {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest<Request | any>();
     const response = ctx.getResponse<Response>();
@@ -30,10 +33,13 @@ export class PrismaExceptionFilter extends BaseExceptionFilter {
       path: request.url,
       method: request.method,
       message: exceptionShortMessage,
-    }
+    };
 
     const user = request.user?.email || config.unknounMask;
-    Logger.error(`[${user}] ${request.method} ${request.url} ${status} - ${exceptionShortMessage}`, PrismaExceptionFilter.name);
+    Logger.error(
+      `[${user}] ${request.method} ${request.url} ${status} - ${exceptionShortMessage}`,
+      PrismaExceptionFilter.name,
+    );
 
     return response.status(status).json(errorResponse);
   }

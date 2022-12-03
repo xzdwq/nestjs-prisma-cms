@@ -8,6 +8,7 @@ export interface IConfiguration {
   db: IDB;
   cors: ICors;
   swagger: ISwagger;
+  auth: IAuth;
 }
 
 export interface IDB {
@@ -26,4 +27,12 @@ export interface ISwagger {
   description: string;
   version: string;
   path: string;
+}
+
+export interface IAuth {
+  tokenAge: string;
+  refreshTokenAge: string;
+  tokenSecret: string;
+  refreshTokenSecret: string;
+  accessDeniedMessage: string;
 }

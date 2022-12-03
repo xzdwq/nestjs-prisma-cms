@@ -1,13 +1,18 @@
+import * as argon from 'argon2';
+import * as dotenv from 'dotenv';
+
 import { Prisma, PrismaClient } from '@prisma/client';
+
+dotenv.config();
 
 const prisma = new PrismaClient();
 
 const defaultUser: Prisma.UserCreateInput[] = [
   {
-    email: 'admin@qvant.com',
+    email: process.env.EMAIL,
     firstName: 'Super',
     lastName: 'User',
-    password: '',
+    password: process.env.PASSWORD,
     role: 'ADMINISTRATOR',
   },
 ];
@@ -16,11 +21,12 @@ async function main() {
   await prisma.user.deleteMany();
 
   console.log(`Start seeding ...`);
-  for (const u of defaultUser) {
-    const user = await prisma.user.create({
-      data: u,
+  for (const user of defaultUser) {
+    const hashedPassword = await argon.hash(user.password);
+    const createUser = await prisma.user.create({
+      data: { ...user, password: hashedPassword },
     });
-    console.log(`Created user with id: ${user.id}`);
+    console.log(`Created user with id: ${createUser.id}`);
   }
   console.log(`Seeding finished.`);
 }

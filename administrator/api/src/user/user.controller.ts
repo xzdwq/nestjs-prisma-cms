@@ -4,11 +4,11 @@ import { User as UserModel } from '@prisma/client';
 import { UserService } from '@/user/user.service';
 import { UserDto } from '@/user/dto/user.dto';
 import { CreateUserDto } from '@/user/dto/create-user.dto';
-import { ApiBody, ApiCreatedResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiCookieAuth, ApiCreatedResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateUserDto } from '@/user/dto/update-user.dto';
 
 @ApiTags('User')
-// @ApiSecurity("X-API-KEY", ["X-API-KEY"])
+@ApiCookieAuth()
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -21,7 +21,7 @@ export class UserController {
     isArray: true,
   })
   @Get()
-  async findAll(): Promise<UserModel[]> {
+  public async findAll(): Promise<UserModel[]> {
     return await this.userService.findAll();
   }
 
@@ -32,7 +32,7 @@ export class UserController {
     type: UserDto,
   })
   @Get(':id')
-  async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<UserModel> {
+  public async findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<UserModel> {
     return await this.userService.findOne(id);
   }
 
@@ -47,7 +47,7 @@ export class UserController {
     type: UserDto,
   })
   @Post()
-  async createUser(@Body() params: CreateUserDto): Promise<UserModel> {
+  public async createUser(@Body() params: CreateUserDto): Promise<UserModel> {
     return await this.userService.createUser(params);
   }
 
@@ -62,7 +62,10 @@ export class UserController {
     type: UserDto,
   })
   @Patch(':id')
-  async updateUser(@Param('id', new ParseUUIDPipe()) id: string, @Body() params: UpdateUserDto): Promise<UserModel> {
+  public async updateUser(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() params: UpdateUserDto,
+  ): Promise<UserModel> {
     return await this.userService.updateUser(id, params);
   }
 
@@ -73,7 +76,7 @@ export class UserController {
     type: UserDto,
   })
   @Delete(':id')
-  async deleteUser(@Param('id', new ParseUUIDPipe()) id: string): Promise<UserModel> {
+  public async deleteUser(@Param('id', new ParseUUIDPipe()) id: string): Promise<UserModel> {
     return await this.userService.deleteUser(id);
   }
 }

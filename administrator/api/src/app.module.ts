@@ -1,11 +1,13 @@
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ClassSerializerInterceptor, Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Logger, Module } from '@nestjs/common';
 
-import { APP_FILTER } from '@nestjs/core';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
+import { AuthModule } from '@/auth/auth.module';
 import { HttpErrorFilter } from '@/common/filter/http-error.filter';
 import { IDB } from '@/common/configuration/configuration.interface';
+import JwtGuard from '@/auth/guard/jwt.guard';
 import { PrismaModule } from 'nestjs-prisma';
 import { UserModule } from '@/user/user.module';
 import configuration from '@/common/configuration/configuration';
@@ -39,6 +41,7 @@ import { loggingMiddleware } from '@/common/middleware/logging.middleware';
       },
     }),
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
@@ -46,6 +49,14 @@ import { loggingMiddleware } from '@/common/middleware/logging.middleware';
     {
       provide: APP_FILTER,
       useClass: HttpErrorFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard,
     },
   ],
 })

@@ -1,13 +1,14 @@
+import { ClassSerializerInterceptor, Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ICors, ISwagger } from '@/common/configuration/configuration.interface';
-import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
 
 import { AppModule } from '@/app.module';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { NestFactory } from '@nestjs/core';
 import { PrismaExceptionFilter } from '@/common/filter/prisma-error.filter';
 import { PrismaService } from 'nestjs-prisma';
+import cookieParser from 'cookie-parser';
 
 const logger = new Logger('NestApplication');
 
@@ -41,22 +42,30 @@ async function bootstrap(): Promise<void> {
   await prismaService.enableShutdownHooks(app);
 
   app.useGlobalFilters(new PrismaExceptionFilter());
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  app.use(cookieParser());
 
   if (SWAGGER.enabled) {
     const options = new DocumentBuilder()
       .setTitle(SWAGGER.title)
       .setDescription(SWAGGER.description)
       .setVersion(SWAGGER.version)
-      // .addApiKey({
-      //   type: "apiKey",
-      //   name: "X-API-KEY",
-      //   in: "header",
-      //   description: "Enter your API key"
-      // }, "X-API-KEY")
+      .addCookieAuth('Authentication', {
+        type: 'http',
+        in: 'Header',
+        scheme: 'Bearer',
+      })
       .build();
     const document = SwaggerModule.createDocument(app, options);
 
-    SwaggerModule.setup(SWAGGER.path, app, document);
+    SwaggerModule.setup(SWAGGER.path, app, document, {
+      swaggerOptions: {
+        requestInterceptor: (req: any) => {
+          req.credentials = 'include';
+          return req;
+        },
+      },
+    });
   }
 
   if (CORS.enabled) {

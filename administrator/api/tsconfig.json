@@ -18,6 +18,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "noLib": false,
+    "esModuleInterop": true,
     "lib": ["es2020"],
     "allowJs": true,
     "paths": {

@@ -24,4 +24,11 @@ export default (): IConfiguration => ({
     version: '1.0',
     path: 'api-docs',
   },
+  auth: {
+    tokenAge: process.env.TOKEN_AGE,
+    refreshTokenAge: process.env.REFRESH_TOKEN_AGE,
+    tokenSecret: process.env.TOKEN_SECRET,
+    refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
+    accessDeniedMessage: 'Access denied. Wrong credentials provided.',
+  },
 });

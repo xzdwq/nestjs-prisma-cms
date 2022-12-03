@@ -1,15 +1,16 @@
-import { ERole, User as UserModel } from '@prisma/client';
+import * as argon from 'argon2';
 
 import { CreateUserDto } from '@/user/dto/create-user.dto';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { UpdateUserDto } from '@/user/dto/update-user.dto';
+import { User as UserModel } from '@prisma/client';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<UserModel[]> {
+  public async findAll(): Promise<UserModel[]> {
     return await this.prisma.user.findMany();
   }
 
@@ -17,8 +18,12 @@ export class UserService {
     return await this.prisma.user.findUnique({ where: { id } });
   }
 
-  async createUser(params: CreateUserDto): Promise<UserModel> {
-    const { email, firstName, lastName, password, role = ERole.WRITER } = params;
+  async findOneByEmail(email: string): Promise<UserModel> {
+    return await this.prisma.user.findUnique({ where: { email } });
+  }
+
+  public async createUser(params: CreateUserDto): Promise<UserModel> {
+    const { email, firstName, lastName, password, role } = params;
 
     return await this.prisma.user.create({
       data: {
@@ -28,19 +33,26 @@ export class UserService {
         password,
         role,
       },
-    })
+    });
   }
 
-  async updateUser(id: string, params: UpdateUserDto): Promise<UserModel> {
+  public async updateUser(id: string, params: UpdateUserDto): Promise<UserModel> {
     return await this.prisma.user.update({
       where: { id },
-      data: { ...params }
+      data: { ...params },
     });
   }
 
-  async deleteUser(id: string): Promise<UserModel> {
+  public async deleteUser(id: string): Promise<UserModel> {
     return await this.prisma.user.delete({
-      where: { id }
+      where: { id },
     });
+  }
+
+  public async getUserIfRefreshTokenMatches(refreshToken: string, userId: string): Promise<UserModel | undefined> {
+    const user = await this.findOne(userId);
+    const isRefreshTokenMatching = await argon.verify(user.refreshToken, refreshToken);
+
+    if (isRefreshTokenMatching) return user;
   }
 }

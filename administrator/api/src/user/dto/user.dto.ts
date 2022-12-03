@@ -1,8 +1,9 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator"
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
 import { ERole } from '@prisma/client';
-import { Password } from "@/common/validate/password.rules";
+import { Exclude } from 'class-transformer';
+import { Password } from '@/common/validate/password.rules';
 
 export class UserDto {
   @ApiProperty({ description: 'User uuid identifier', required: false })
@@ -11,21 +12,21 @@ export class UserDto {
   @ApiProperty({ description: 'User email' })
   @IsNotEmpty()
   @IsEmail()
-  readonly email: string;
+  readonly email?: string;
 
   @ApiProperty({ description: 'User first name' })
   @IsString()
-  readonly firstName: string;
+  readonly firstName?: string;
 
   @ApiProperty({ description: 'User last name' })
   @IsString()
-  readonly lastName: string;
+  readonly lastName?: string;
 
   @ApiProperty({ description: 'User password' })
   @IsNotEmpty()
   @IsString()
   @Password()
-  readonly password: string;
+  readonly password?: string;
 
   @ApiProperty({ description: 'User role', required: false })
   @IsOptional()
@@ -33,8 +34,12 @@ export class UserDto {
   readonly role?: ERole;
 
   @ApiProperty({ description: 'Date created user', required: false })
+  @Exclude()
   readonly createAt?: Date;
 
   @ApiProperty({ description: 'Date updated user', required: false })
+  @Exclude()
   readonly updateAt?: Date;
+
+  readonly refreshToken?: string;
 }
