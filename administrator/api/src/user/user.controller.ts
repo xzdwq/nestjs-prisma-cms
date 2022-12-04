@@ -4,11 +4,11 @@ import { User as UserModel } from '@prisma/client';
 import { UserService } from '@/user/user.service';
 import { UserDto } from '@/user/dto/user.dto';
 import { CreateUserDto } from '@/user/dto/create-user.dto';
-import { ApiBody, ApiCookieAuth, ApiCreatedResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateUserDto } from '@/user/dto/update-user.dto';
 
 @ApiTags('User')
-@ApiCookieAuth()
+@ApiBearerAuth()
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

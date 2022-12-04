@@ -50,10 +50,11 @@ async function bootstrap(): Promise<void> {
       .setTitle(SWAGGER.title)
       .setDescription(SWAGGER.description)
       .setVersion(SWAGGER.version)
-      .addCookieAuth('Authentication', {
+      .addBearerAuth({
         type: 'http',
-        in: 'Header',
         scheme: 'Bearer',
+        in: 'Header',
+        bearerFormat: 'JWT',
       })
       .build();
     const document = SwaggerModule.createDocument(app, options);

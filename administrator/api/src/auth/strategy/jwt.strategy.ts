@@ -15,6 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         (request: Request) => {
           const swaggerToken = request.get('Authorization')?.replace('Bearer', '')?.trim();
           let accessToken = request?.cookies['Authentication'];
+
           if (!accessToken && swaggerToken) accessToken = swaggerToken;
 
           if (!accessToken) return null;
