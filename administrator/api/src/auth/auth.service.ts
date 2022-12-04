@@ -51,6 +51,7 @@ export class AuthService {
     refreshToken: string;
   }> {
     const authConfig = this.configService.get<IAuth>('auth');
+    console.log(userId);
 
     const user = await this.userService.findOne(userId);
     if (!user || !user.refreshToken) throw new ForbiddenException(authConfig.accessDeniedMessage);

@@ -10,6 +10,7 @@ import { Response } from 'express';
 import { IAuth } from '@/common/configuration/configuration.interface';
 import ms from 'ms';
 import { ApiExcludeController } from '@nestjs/swagger';
+import { User } from '@/common/decorator/user.decorator';
 
 @ApiExcludeController()
 @Controller('auth')
@@ -63,10 +64,10 @@ export class AuthController {
   @Get('refresh')
   public async refreshTokens(
     @Req() request: RequestUser,
+    @User('id') userId: string,
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ refreshToken: boolean }> {
-    const { id: userId } = request.user;
-
+    console.log(userId);
     const refreshResult = await this.authService.refreshToken(userId, request.cookies?.Refresh);
 
     res.cookie('Authentication', refreshResult.accessToken, {

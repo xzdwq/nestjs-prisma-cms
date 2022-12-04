@@ -23,12 +23,11 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         },
       ]),
       secretOrKey: configService.get<IAuth>('auth').tokenSecret,
-      ignoreExpiration: false,
     });
   }
 
   async validate(payload: IJwtPayload) {
-    if (payload === null) throw new UnauthorizedException();
+    if (!payload) throw new UnauthorizedException();
     return payload;
   }
 }
