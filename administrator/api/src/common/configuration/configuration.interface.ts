@@ -1,3 +1,5 @@
+import { CookieOptions } from 'express';
+
 export interface IConfiguration {
   mode: string;
   host: string;
@@ -35,4 +37,5 @@ export interface IAuth {
   tokenSecret: string;
   refreshTokenSecret: string;
   accessDeniedMessage: string;
+  cookieOpt: CookieOptions;
 }

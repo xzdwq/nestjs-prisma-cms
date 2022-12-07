@@ -1,4 +1,5 @@
 import { AuthController } from '@/auth/auth.controller';
+import { AuthCookieService } from '@/auth/utils/auth-cookie.service';
 import { AuthService } from '@/auth/auth.service';
 import { ConfigService } from '@nestjs/config';
 import { IAuth } from '@/common/configuration/configuration.interface';
@@ -29,6 +30,6 @@ import { UserModule } from '@/user/user.module';
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, JwtRefreshStrategy],
+  providers: [AuthService, AuthCookieService, JwtStrategy, JwtRefreshStrategy],
 })
 export class AuthModule {}

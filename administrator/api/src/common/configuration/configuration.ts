@@ -30,5 +30,10 @@ export default (): IConfiguration => ({
     tokenSecret: process.env.TOKEN_SECRET,
     refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
     accessDeniedMessage: 'Access denied. Wrong credentials provided.',
+    cookieOpt: {
+      httpOnly: true,
+      path: '/',
+      sameSite: 'strict',
+    },
   },
 });
